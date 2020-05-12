@@ -1,0 +1,174 @@
+version: '3'
+
+services:
+  h1:
+    image: lab4
+    restart: unless-stopped
+    privileged: true
+    tty: true
+    hostname: h1
+    environment:
+      - TZ=America/New_York
+    networks:
+      h1r1:
+        ipv4_address: 172.18.101.21
+  h2:
+    image: lab4
+    restart: unless-stopped
+    privileged: true
+    tty: true
+    hostname: h2
+    environment:
+      - TZ=America/New_York
+    networks:
+      r2h2:
+        ipv4_address: 172.18.202.22
+  r1:
+    image: lab4
+    restart: unless-stopped
+    privileged: true
+    tty: true
+    hostname: r1
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - ./$CONF/r1.conf:/etc/frr/frr.conf:ro
+    networks:
+      h1r1:
+        ipv4_address: 172.18.101.11
+      r1r2:
+        ipv4_address: 172.18.12.11
+      r1r3:
+        ipv4_address: 172.18.13.11
+      r1r4:
+        ipv4_address: 172.18.14.11
+  r2:
+    image: lab4
+    restart: unless-stopped
+    privileged: true
+    tty: true
+    hostname: r2
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - ./$CONF/r2.conf:/etc/frr/frr.conf:ro
+    networks:
+      r1r2:
+        ipv4_address: 172.18.12.12
+      r2h2:
+        ipv4_address: 172.18.202.12
+      r3r2:
+        ipv4_address: 172.18.32.12
+      r5r2:
+        ipv4_address: 172.18.52.12
+  r3:
+    image: lab4
+    restart: unless-stopped
+    privileged: true
+    tty: true
+    hostname: r3
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - ./$CONF/r3.conf:/etc/frr/frr.conf:ro
+    networks:
+      r1r3:
+        ipv4_address: 172.18.13.13
+      r3r2:
+        ipv4_address: 172.18.32.13
+  r4:
+    image: lab4
+    restart: unless-stopped
+    privileged: true
+    tty: true
+    hostname: r4
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - ./$CONF/r4.conf:/etc/frr/frr.conf:ro
+    networks:
+      r1r4:
+        ipv4_address: 172.18.14.14
+      r4r5:
+        ipv4_address: 172.18.45.14
+  r5:
+    image: lab4
+    restart: unless-stopped
+    privileged: true
+    tty: true
+    hostname: r5
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - ./$CONF/r5.conf:/etc/frr/frr.conf:ro
+    networks:
+      r4r5:
+        ipv4_address: 172.18.45.15
+      r5r2:
+        ipv4_address: 172.18.52.15
+
+networks:
+  h1r1:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-h1r1
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.101.0/24
+  r2h2:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-r2h2
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.202.0/24
+  r1r3:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-r1r3
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.13.0/24
+  r1r2:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-r1r2
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.12.0/24
+  r1r4:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-r1r4
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.14.0/24
+  r4r5:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-r4r5
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.45.0/24
+  r5r2:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-r5r2
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.52.0/24
+  r3r2:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-r3r2
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.32.0/24
